@@ -7,11 +7,11 @@ project_root = Path(__file__).resolve().parent.parent
 database_path = project_root / "data" / "sessions.db"
 
 def search_sessions(
-        keyword=None,
-        day=None, 
-        level=None, 
-        session_type=None,
-        limit=20
+        keyword: str = None,
+        day: str = None, 
+        level: int = None, 
+        session_type: str = None,
+        limit: int = 20
 ) -> list[dict]:
     """Search re:Invent 2026 sessions using optional filters.
 
@@ -109,7 +109,7 @@ def search_sessions(
 
 def get_session_details(
         session_id: str
-) -> dict | None:
+) -> dict:
     """Get the full details of one re:Invent 2026 session by its ID.
 
     Use this after search_sessions to get the information search results
@@ -120,15 +120,16 @@ def get_session_details(
             search_sessions, e.g. "AIM256-S" or "CON304-R1".
 
     Returns:
-        A dict with the keys: id, base_id, title, session_type, level, day
-        ("YYYY-MM-DD"), start_time ("HH:MM"), end_time ("HH:MM"), venue,
-        description, and walk_up_only (1 if the session is walk-up only,
-        0 otherwise).
+        On success:
+            A dict with the keys: id, base_id, title, session_type, level, day
+            ("YYYY-MM-DD"), start_time ("HH:MM"), end_time ("HH:MM"), venue,
+            description, and walk_up_only (1 if the session is walk-up only,
+            0 otherwise).
+            base_id is the session code without its suffix (e.g. "CON304" for
+            "CON304-R1"). Repeats of the same session share a base_id.
 
-        base_id is the session code without its suffix (e.g. "CON304" for
-        "CON304-R1"). Repeats of the same session share a base_id.
-
-        Returns None if no session has this ID.
+        If the ID does not match a session, a dict with a single "error" key 
+        naming the missing session ID.
     """
 
     connection = sqlite3.connect(database_path)
@@ -157,7 +158,9 @@ def get_session_details(
     connection.close()
 
     if row is None:
-        return None
+        return {
+            "error": f"Session not found for id: {session_id}"
+        }
     
     return dict(row)
 
@@ -194,12 +197,12 @@ def check_conflict(
     first_session = get_session_details(first_session_id)
     second_session = get_session_details(second_session_id)
 
-    if first_session is None:
+    if "error" in first_session:
         return {
             "error": f"Session not found for id: {first_session_id}"
         }
 
-    if second_session is None:
+    if "error" in second_session:
         return {
             "error": f"Session not found for id: {second_session_id}"
         }

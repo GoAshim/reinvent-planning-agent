@@ -19,7 +19,7 @@ print(f"title: {session["title"]}")
 print(f"description: {session["description"]}")
 
 invalid_session = get_session_details(session_id="invalid-session-id")
-assert invalid_session is None
-print("\nInvalid session: {invalid_session}")
+assert "error" in invalid_session
+print(f"\nInvalid session: {invalid_session}")
 
 print("\nAll tests of get_session_details tool passed.")

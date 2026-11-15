@@ -9,11 +9,11 @@ database_path = project_root / "data" / "sessions.db"
 
 @tool
 def search_sessions(
-        keyword=None,
-        day=None, 
-        level=None, 
-        session_type=None,
-        limit=20
+        keyword: str = None,
+        day: str = None, 
+        level: int = None, 
+        session_type: str = None,
+        limit: int = 20
 ) -> list[dict]:
     """Search re:Invent 2026 sessions using optional filters.
 
@@ -33,7 +33,7 @@ def search_sessions(
             "code_talk", "exam_prep", "gamified_learning", "lab",
             "lightning_talk", "workshop".
         limit: Maximum number of sessions to return, from 1 to 20.
-            Defaults to 20.
+            Defaults to 20. MUST be an integer, never a string.
 
     Returns:
         A list of dicts, one per matching session, with the keys:

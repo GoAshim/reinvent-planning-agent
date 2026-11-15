@@ -31,7 +31,7 @@ def search_sessions(
             "code_talk", "exam_prep", "gamified_learning", "lab",
             "lightning_talk", "workshop".
         limit: Maximum number of sessions to return, from 1 to 20.
-            Defaults to 20.
+            Defaults to 20. MUST be an integer, never a string.
 
     Returns:
         A list of dicts, one per matching session, with the keys:
@@ -44,8 +44,8 @@ def search_sessions(
         ValueError: If limit is outside the range 1 to 20.
     """
 
-    if not isinstance(limit, int) or isinstance(limit, bool):
-        raise TypeError("limit must be a number")
+    # Defensive casting just in case the LLM still passes a string
+    limit = int(limit)    
     
     if limit < 1 or limit > 20:
         raise ValueError("limit must be between 1 and 20")

@@ -1,10 +1,19 @@
 # Import libraries
-from strands import Agent
-from strands import tool
+from strands import Agent, tool
 from strands.models import BedrockModel
 from src.strands_tools import search_sessions, get_session_details, check_conflict
 from src.bedrock_client import MODEL_ID, session
 from src.memory import SQLiteShortTermMemory, SQLiteLongTermMemory
+from phoenix.otel import register
+
+
+# Initialize a OpenTelemetry pipeline / trace to the 
+# local Phoenix server
+tracer_provider = register(
+    # This groups the traces in the Phoenix UI
+    project_name="reinvent-agent-local" 
+)
+
 
 # Initialize a Bedrock model with the Haiku model id 
 # and the SSO session defined in bedrock_client.py
@@ -28,6 +37,7 @@ SYSTEM_PROMPT = """
     You are a helpful AWS re:Invent 2026 
     session planning assistant.
 """
+
 
 def run_strands_agent(
     user_prompt: str,

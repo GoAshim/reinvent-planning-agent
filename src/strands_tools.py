@@ -102,10 +102,9 @@ def search_sessions(
 
     rows = cursor.fetchall()
     sessions = [dict(row) for row in rows]
-    # sessions = cursor.fetchall()
 
     connection.close()
-
+    
     return sessions
 
 
@@ -164,7 +163,7 @@ def get_session_details(
         return {
             "error": f"Session not found for id: {session_id}"
         }
-    
+
     return dict(row)
 
 

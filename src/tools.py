@@ -44,8 +44,8 @@ def search_sessions(
         ValueError: If limit is outside the range 1 to 20.
     """
 
-    # Defensive casting just in case the LLM still passes a string
-    limit = int(limit)    
+    if not isinstance(limit, int) or isinstance(limit, bool):
+        raise TypeError("limit must be a number")
     
     if limit < 1 or limit > 20:
         raise ValueError("limit must be between 1 and 20")

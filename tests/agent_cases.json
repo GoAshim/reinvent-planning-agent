@@ -1,0 +1,154 @@
+[
+  {
+    "id": "001",
+    "category": "lookup",
+    "prompt": "What is session COP319-R about, and what level is it?",
+    "expect": {
+      "tools_called": ["get_session_details"],
+      "must_mention_ids": ["COP319-R"],
+      "must_contain": ["300"],
+      "max_sessions": 1
+    }
+  },
+  {
+    "id": "002",
+    "category": "search",
+    "prompt": "Find a workshop about Bedrock on Wednesday.",
+    "expect": {
+      "tools_called": ["search_sessions"],
+      "min_sessions": 1,
+      "constraints": {
+        "session_type": "workshop",
+        "day": "2026-12-02",
+        "keyword": "Bedrock"
+      }
+    },
+    "notes": "Wednesday of re:Invent 2026 is 2026-12-02. The model must work out the date itself."
+  },
+  {
+    "id": "003",
+    "category": "multi_lookup",
+    "prompt": "Give me a one-line summary of each of these sessions: COP319-R, COP304 and AIM109-S.",
+    "expect": {
+      "tools_called": ["get_session_details"],
+      "must_mention_ids": ["COP319-R", "COP304", "AIM109-S"],
+      "min_sessions": 3,
+      "max_sessions": 3
+    }
+  },
+  {
+    "id": "004",
+    "category": "multi_search",
+    "prompt": "Find me two sessions, one on Bedrock, and another on MCP on December 2, and give me a brief overview about each sessions.",
+    "expect": {
+      "tools_called": ["search_sessions"],
+      "min_sessions": 2,
+      "topics": [
+        {"keyword": "Bedrock"},
+        {"keyword": "MCP", "day": "2026-12-02"}
+      ]
+    },
+    "notes": "The prompt is ambiguous about whether December 2 applies to the Bedrock session too, so only the MCP session is held to that day."
+  },
+  {
+    "id": "005",
+    "category": "no_results",
+    "prompt": "Are there any sessions about blockchain?",
+    "expect": {
+      "tools_called": ["search_sessions"],
+      "expect_no_results": true
+    },
+    "notes": "No session title or description mentions blockchain."
+  },
+  {
+    "id": "006",
+    "category": "out_of_range",
+    "prompt": "What sessions about Bedrock are on December 10?",
+    "expect": {
+      "expect_no_results": true
+    },
+    "notes": "No tool is required. Calling search_sessions and getting an empty result is also acceptable."
+  },
+  {
+    "id": "007",
+    "category": "unanswerable",
+    "prompt": "Who is the speaker for session AIM109-S?",
+    "expect": {
+      "tools_called": ["get_session_details"],
+      "must_mention_ids": ["AIM109-S"],
+      "max_sessions": 1
+    },
+    "notes": "The sessions table has no speaker column, so any speaker name is invented."
+  },
+  {
+    "id": "008",
+    "category": "invalid_id",
+    "prompt": "Tell me about session XYZ999.",
+    "expect": {
+      "tools_called": ["get_session_details"],
+      "missing_ids": ["XYZ999"],
+      "expect_no_results": true
+    }
+  },
+  {
+    "id": "009",
+    "category": "mixed_ids",
+    "prompt": "Tell me about the following sessions - COP319-R, ABC999, and COP304.",
+    "expect": {
+      "tools_called": ["get_session_details"],
+      "must_mention_ids": ["COP319-R", "COP304"],
+      "missing_ids": ["ABC999"],
+      "min_sessions": 2,
+      "max_sessions": 2
+    }
+  },
+  {
+    "id": "010",
+    "category": "schedule",
+    "prompt": "Build me a full 5-day schedule of agent sessions, one per day from Monday to Friday, with the details of each one, and let me know if they overlap with each other.",
+    "expect": {
+      "tools_called": ["search_sessions"],
+      "min_sessions": 5,
+      "max_sessions": 5,
+      "constraints": {"keyword": "agent"},
+      "topics": [
+        {"day": "2026-11-30"},
+        {"day": "2026-12-01"},
+        {"day": "2026-12-02"},
+        {"day": "2026-12-03"},
+        {"day": "2026-12-04"}
+      ]
+    },
+    "notes": "Sessions on different days cannot overlap, so calling check_conflict is not needed."
+  },
+  {
+    "id": "011",
+    "category": "search_and_conflict",
+    "prompt": "Find me two sessions, one on Bedrock, and another on MCP on December 2, and check if I can attend both of them.",
+    "expect": {
+      "tools_called": ["search_sessions", "check_conflict"],
+      "min_sessions": 2,
+      "topics": [
+        {"keyword": "Bedrock"},
+        {"keyword": "MCP", "day": "2026-12-02"}
+      ]
+    },
+    "notes": "Same ambiguity as 004 about which session December 2 applies to."
+  },
+  {
+    "id": "012",
+    "category": "full_pipeline",
+    "prompt": "Find two level 300 workshops about Amazon Bedrock on December 2, get their full details, and check whether they conflict.",
+    "expect": {
+      "tools_called": ["search_sessions", "get_session_details", "check_conflict"],
+      "min_sessions": 2,
+      "max_sessions": 2,
+      "constraints": {
+        "level": 300,
+        "session_type": "workshop",
+        "day": "2026-12-02",
+        "keyword": "Bedrock"
+      }
+    }
+  }
+]

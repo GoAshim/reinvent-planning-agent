@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Strands agent architecture with SQLite memory and Phoenix tracing">
+<style>
+  svg { --surface:#ffffff; --fg:#18212d; --muted:#526073; --line:#6f7d90;
+    --code:#2c58cc; --code-bg:#e9effd; --code-wash:#f3f6fe; --fw:#0d8478; --fw-bg:#e1f3f0;
+    --ext:#b0650f; --ext-bg:#fbefe0; --data:#56677c; --data-bg:#eceff3;
+    --sans:"Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace; }
+  @media (prefers-color-scheme: dark) {
+    svg { --surface:#161b23; --fg:#e5e9ef; --muted:#9ba6b5; --line:#8794a6;
+      --code:#86a6ff; --code-bg:#1b2541; --code-wash:#141b2c; --fw:#4fc6b7; --fw-bg:#11302c;
+      --ext:#e9a650; --ext-bg:#33240f; --data:#a3b2c5; --data-bg:#1f262f; }
+  }
+  .bg { fill: var(--surface); }
+  .c-code { fill: var(--code-bg); stroke: var(--code); stroke-width: 1.5; }
+  .c-fw { fill: var(--fw-bg); stroke: var(--fw); stroke-width: 1.5; }
+  .c-ext { fill: var(--ext-bg); stroke: var(--ext); stroke-width: 1.5; }
+  .c-data { fill: var(--data-bg); stroke: var(--data); stroke-width: 1.5; }
+  .c-wrap { fill: var(--code-wash); stroke: var(--code); stroke-width: 1.5; stroke-dasharray: 6 4; }
+  .c-pill { fill: var(--surface); stroke: var(--fw); stroke-width: 1.5; }
+  .t-title { font: 600 13px var(--sans); fill: var(--fg); }
+  .t-small { font: 600 12px var(--sans); fill: var(--fg); }
+  .t-mono { font: 11.5px var(--mono); fill: var(--muted); }
+  .t-label { font: 11px var(--sans); fill: var(--muted); }
+  .t-num { font: 600 13px var(--mono); fill: var(--code); }
+  .t-num-fw { font: 600 13px var(--mono); fill: var(--fw); }
+  .edge { stroke: var(--line); stroke-width: 1.5; fill: none; }
+  .dash { stroke-dasharray: 5 4; }
+  .head { fill: var(--line); }
+</style>
+<rect class="bg" width="960" height="640" rx="10"/>
+        <defs>
+          <marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path class="head" d="M0,0 L10,5 L0,10 z"/>
+          </marker>
+        </defs>
+
+        <!-- caller -->
+        <rect class="c-code" x="20" y="62" width="170" height="64" rx="6"/>
+        <text class="t-title" x="105" y="84" text-anchor="middle">Test or eval script</text>
+        <text class="t-mono" x="105" y="102" text-anchor="middle">run_strands_agent</text>
+        <text class="t-mono" x="105" y="117" text-anchor="middle">_with_LTM(...)</text>
+
+        <!-- strands_agent.py container -->
+        <rect class="c-wrap" x="220" y="20" width="450" height="460" rx="10"/>
+        <text class="t-title" x="238" y="44">src/strands_agent.py · run_strands_agent_with_LTM()</text>
+
+        <rect class="c-code" x="250" y="62" width="390" height="48" rx="6"/>
+        <text x="266" y="81"><tspan class="t-num">1</tspan><tspan class="t-title" dx="10">Load this session's history</tspan></text>
+        <text class="t-mono" x="286" y="100">st_memory.get_context(session_id)</text>
+
+        <rect class="c-code" x="250" y="124" width="390" height="48" rx="6"/>
+        <text x="266" y="143"><tspan class="t-num">2</tspan><tspan class="t-title" dx="10">Add saved preferences to the system prompt</tspan></text>
+        <text class="t-mono" x="286" y="162">lt_memory.get_user_profile(user_id)</text>
+
+        <rect class="c-code" x="250" y="186" width="390" height="62" rx="6"/>
+        <text x="266" y="205"><tspan class="t-num">3</tspan><tspan class="t-title" dx="10">Create the agent</tspan></text>
+        <text class="t-mono" x="286" y="223">Agent(model, tools + [save_user_preference],</text>
+        <text class="t-mono" x="286" y="239">      system_prompt, messages=history)</text>
+
+        <!-- framework loop -->
+        <rect class="c-fw" x="250" y="262" width="390" height="130" rx="8"/>
+        <text x="266" y="288"><tspan class="t-num-fw">4</tspan><tspan class="t-title" dx="10">agent(user_prompt)</tspan></text>
+        <text class="t-label" x="266" y="312">Strands event loop</text>
+        <text class="t-label" x="266" y="328">repeats model and tool</text>
+        <text class="t-label" x="266" y="344">calls until end_turn</text>
+
+        <rect class="c-pill" x="420" y="280" width="208" height="42" rx="6"/>
+        <text class="t-small" x="524" y="298" text-anchor="middle">Model call</text>
+        <text class="t-mono" x="524" y="314" text-anchor="middle">BedrockModel</text>
+
+        <path class="edge" d="M490,322 V340" marker-end="url(#m2)"/>
+        <path class="edge" d="M558,340 V322" marker-end="url(#m2)"/>
+
+        <rect class="c-pill" x="420" y="340" width="208" height="42" rx="6"/>
+        <text class="t-small" x="524" y="358" text-anchor="middle">Tool calls</text>
+        <text class="t-mono" x="524" y="374" text-anchor="middle">matched by tool name</text>
+
+        <rect class="c-code" x="250" y="410" width="390" height="50" rx="6"/>
+        <text x="266" y="430"><tspan class="t-num">5</tspan><tspan class="t-title" dx="10">Save the turn</tspan></text>
+        <text class="t-mono" x="286" y="449">st_memory.save_turn(session_id, prompt, answer)</text>
+
+        <!-- prompt in / answer out -->
+        <path class="edge" d="M190,86 H250" marker-end="url(#m2)"/>
+        <text class="t-label" x="205" y="79" text-anchor="middle">prompt</text>
+        <path class="edge" d="M250,435 H105 V126" marker-end="url(#m2)"/>
+        <text class="t-label" x="114" y="454">final answer</text>
+
+        <!-- right column -->
+        <rect class="c-ext" x="720" y="40" width="220" height="84" rx="6"/>
+        <text class="t-title" x="830" y="66" text-anchor="middle">Phoenix</text>
+        <text class="t-mono" x="830" y="86" text-anchor="middle">localhost:6006</text>
+        <text class="t-mono" x="830" y="104" text-anchor="middle">reinvent-agent-local</text>
+        <path class="edge dash" d="M640,272 H692 V82 H720" marker-end="url(#m2)"/>
+        <text class="t-label" x="700" y="180" text-anchor="middle" transform="rotate(-90 700 180)">OpenTelemetry spans</text>
+
+        <rect class="c-ext" x="720" y="262" width="220" height="64" rx="6"/>
+        <text class="t-title" x="830" y="288" text-anchor="middle">Amazon Bedrock</text>
+        <text class="t-mono" x="830" y="308" text-anchor="middle">ConverseStream · Haiku 4.5</text>
+        <path class="edge" d="M628,301 H720" marker-start="url(#m2)" marker-end="url(#m2)"/>
+
+        <rect class="c-code" x="720" y="336" width="220" height="70" rx="6"/>
+        <text class="t-title" x="830" y="360" text-anchor="middle">src/strands_tools.py</text>
+        <text class="t-mono" x="830" y="379" text-anchor="middle">3 @tool functions</text>
+        <text class="t-mono" x="830" y="396" text-anchor="middle">schemas from type hints</text>
+        <path class="edge" d="M628,361 H720" marker-start="url(#m2)" marker-end="url(#m2)"/>
+
+        <path class="edge" d="M830,406 V426" marker-end="url(#m2)"/>
+        <rect class="c-data" x="720" y="426" width="220" height="56" rx="6"/>
+        <text class="t-title" x="830" y="450" text-anchor="middle">data/sessions.db</text>
+        <text class="t-mono" x="830" y="469" text-anchor="middle">SQLite · 1,099 sessions</text>
+
+        <!-- memory store -->
+        <path class="edge" d="M400,480 V524" marker-start="url(#m2)" marker-end="url(#m2)"/>
+        <text class="t-label" x="410" y="506">reads history and preferences, saves turns</text>
+        <rect class="c-data" x="250" y="524" width="300" height="64" rx="6"/>
+        <text class="t-title" x="400" y="550" text-anchor="middle">data/memory.db</text>
+        <text class="t-mono" x="400" y="570" text-anchor="middle">messages · user_preferences</text>
+
+        <!-- legend -->
+        <g transform="translate(20 612)">
+          <rect class="c-code" width="14" height="14" rx="3"/><text class="t-label" x="22" y="11">My code</text>
+          <rect class="c-fw" x="110" width="14" height="14" rx="3"/><text class="t-label" x="132" y="11">Strands framework</text>
+          <rect class="c-ext" x="262" width="14" height="14" rx="3"/><text class="t-label" x="284" y="11">External service</text>
+          <rect class="c-data" x="402" width="14" height="14" rx="3"/><text class="t-label" x="424" y="11">Data store</text>
+        </g>
+      </svg>
